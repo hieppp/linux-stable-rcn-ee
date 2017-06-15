@@ -20,7 +20,7 @@
 #include <sound/core.h>
 #include <sound/pcm.h>
 #include <sound/soc.h>
-
+#include <sound/pcm_params.h>
 #include <asm/dma.h>
 #include <asm/mach-types.h>
 
@@ -28,6 +28,15 @@ struct snd_soc_card_drvdata_davinci {
 	struct clk *mclk;
 	unsigned sysclk;
 };
+
+static unsigned int evm_get_bclk(struct snd_pcm_hw_params *params)
+{
+	int sample_size = snd_pcm_format_width(params_format(params));
+	int rate = params_rate(params);
+	int channels = params_channels(params);
+
+	return sample_size * channels * rate;
+}
 
 static int evm_startup(struct snd_pcm_substream *substream)
 {
@@ -52,6 +61,36 @@ static void evm_shutdown(struct snd_pcm_substream *substream)
 
 	if (drvdata->mclk)
 		clk_disable_unprepare(drvdata->mclk);
+}
+
+static int pcm5102a_hw_params(struct snd_pcm_substream *substream,
+				 struct snd_pcm_hw_params *params)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+//	struct snd_soc_codec *codec = rtd->codec;
+	struct snd_soc_card *soc_card = rtd->card;
+	struct platform_device *pdev = to_platform_device(soc_card->dev);
+	unsigned int bclk_freq = evm_get_bclk(params);
+	unsigned sysclk = ((struct snd_soc_card_drvdata_davinci *)
+			   snd_soc_card_get_drvdata(soc_card))->sysclk;
+	int ret;
+ 
+	ret = snd_soc_dai_set_clkdiv(cpu_dai, 1, sysclk/bclk_freq);
+	if (ret < 0) {
+		dev_err(&pdev->dev, "can't set CPU DAI clock divider %d\n",
+			ret);
+		return ret;
+	}
+ 
+	printk("PCM5102a hw params\n");
+	printk("sysclk=%d\n", sysclk);
+	printk("bclk_freq=%d\n", bclk_freq);
+	ret = snd_soc_dai_set_sysclk(cpu_dai, 0, sysclk, SND_SOC_CLOCK_OUT);
+	if (ret < 0)
+		return ret;
+ 
+	return ret;
 }
 
 static int evm_hw_params(struct snd_pcm_substream *substream,
@@ -156,6 +195,12 @@ static struct snd_soc_ops evm_ops = {
 	.startup = evm_startup,
 	.shutdown = evm_shutdown,
 	.hw_params = evm_hw_params,
+};
+
+static struct snd_soc_ops pcm5102a_ops = {
+	.startup = evm_startup,
+	.shutdown = evm_shutdown,
+	.hw_params = pcm5102a_hw_params,
 };
 
 /* davinci-evm machine dapm widgets */
@@ -309,6 +354,15 @@ static struct snd_soc_dai_link da830_evm_dai = {
 		   SND_SOC_DAIFMT_IB_NF,
 };
 
+static struct snd_soc_dai_link evm_dai_pcm5102a = {
+	.name		= "PCM5102A", //This is chosen arbitrarily.  Can be anything.
+	.stream_name	= "Playback", //This comes from the PCM5102a driver create previously.
+	.codec_dai_name	= "pcm5102a-hifi", //This comes from the PCM5102a driver create previously
+	.ops            = &pcm5102a_ops, //This is a structure that we will create later.
+	.dai_fmt 	= (SND_SOC_DAIFMT_CBS_CFS | SND_SOC_DAIFMT_I2S |
+			   SND_SOC_DAIFMT_IB_NF),
+};
+
 static struct snd_soc_dai_link da850_evm_dai = {
 	.name = "TLV320AIC3X",
 	.stream_name = "AIC3X",
@@ -430,6 +484,10 @@ static struct snd_soc_dai_link evm_dai_wilink8_bt = {
 };
 
 static const struct of_device_id davinci_evm_dt_ids[] = {
+	{
+		.compatible = "ti,pcm5102a-evm-audio",
+		.data = (void *) &evm_dai_pcm5102a,
+	},
 	{
 		.compatible = "ti,da830-evm-audio",
 		.data = (void *) &evm_dai_tlv320aic3x,
