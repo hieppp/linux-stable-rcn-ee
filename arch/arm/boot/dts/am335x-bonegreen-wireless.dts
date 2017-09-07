@@ -124,7 +124,7 @@
 		compatible = "ti,pcm5102a-evm-audio";
 		ti,model = "TI PCM5102A";
 		ti,audio-codec = <&pcm5102a>;
-		ti,mcasp-controller = <&mcasp1>;
+		ti,mcasp-controller = <&mcasp0>;
 		ti,codec-clock-rate = <24000000>;
 	};
  
