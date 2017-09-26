@@ -83,9 +83,9 @@ static int pcm5102a_hw_params(struct snd_pcm_substream *substream,
 		return ret;
 	}
  
-	printk("PCM5102a hw params\n");
-	printk("sysclk=%d\n", sysclk);
-	printk("bclk_freq=%d\n", bclk_freq);
+	// printk("PCM5102a hw params\n");
+	// printk("sysclk=%d\n", sysclk);
+	// printk("bclk_freq=%d\n", bclk_freq);
 	ret = snd_soc_dai_set_sysclk(cpu_dai, 0, sysclk, SND_SOC_CLOCK_OUT);
 	if (ret < 0)
 		return ret;
