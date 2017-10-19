@@ -1,6 +1,7 @@
 config SND_DAVINCI_SOC
-	tristate "SoC Audio for TI DAVINCI or AM33XX/AM43XX chips"
-	depends on ARCH_DAVINCI || SOC_AM33XX || SOC_AM43XX
+	tristate
+	depends on ARCH_DAVINCI
+	select SND_EDMA_SOC
 
 config SND_EDMA_SOC
 	tristate "SoC Audio for Texas Instruments chips using eDMA"
