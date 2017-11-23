@@ -117,7 +117,7 @@
 		ti,model = "TI BeagleBone Black";
 		ti,audio-codec = <&tlv320aic32x4>;
 		ti,mcasp-controller = <&mcasp0>;
-		ti,codec-clock-rate = <12000000>;
+		ti,codec-clock-rate = <24000000>;
 		ti,audio-routing =
 			"Headphone Jack",       "HPLOUT",
 			"Headphone Jack",       "HPROUT",
