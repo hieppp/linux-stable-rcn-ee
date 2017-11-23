@@ -500,13 +500,6 @@ static int aic32x4_set_bias_level(struct snd_soc_codec *codec,
 
 	switch (level) {
 	case SND_SOC_BIAS_ON:
-		// /* Switch on master clock */
-		// ret = clk_prepare_enable(aic32x4->mclk);
-		// if (ret) {
-		// 	dev_err(codec->dev, "Failed to enable master clock\n");
-		// 	return ret;
-		// }
-
 		if (aic32x4->mclk) {
 			/* Switch on master clock */
 			ret = clk_prepare_enable(aic32x4->mclk);
@@ -514,6 +507,14 @@ static int aic32x4_set_bias_level(struct snd_soc_codec *codec,
 				dev_err(codec->dev, "Failed to enable master clock\n");
 				return ret;
 			}
+		}
+		// if (aic32x4->mclk) {
+		// 	/* Switch on master clock */
+		// 	ret = clk_prepare_enable(aic32x4->mclk);
+		// 	if (ret) {
+		// 		dev_err(codec->dev, "Failed to enable master clock\n");
+		// 		return ret;
+		// 	}
 
 		/* Switch on PLL */
 		snd_soc_update_bits(codec, AIC32X4_PLLPR,
