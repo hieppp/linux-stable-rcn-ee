@@ -86,8 +86,8 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2c2_pins>;
 
-	tlv320aic32x4: tlv320aic32x4@18 {
-		compatible = "ti,tlv320aic32x4";
+	tlv320aic3x: tlv320aic3x@18 {
+		compatible = "ti,tlv320aic3x";
 		reg = <0x18>;
 		status = "okay";
 	};
@@ -113,17 +113,16 @@
 
 / {
 	sound {
-		compatible = "ti,beaglebone-black-audio";
-		ti,model = "TI BeagleBone Black";
-		ti,audio-codec = <&tlv320aic32x4>;
+		compatible = "ti,da830-evm-audio";
+		ti,model = "DA830 EVM";
+		ti,audio-codec = <&tlv320aic3x>;
 		ti,mcasp-controller = <&mcasp0>;
-		ti,codec-clock-rate = <24000000>;
+		ti,codec-clock-rate = <12000000>;
 		ti,audio-routing =
 			"Headphone Jack",       "HPLOUT",
 			"Headphone Jack",       "HPROUT",
 			"LINE1L",               "Line In",
 			"LINE1R",               "Line In";
-		clock-names = "mclk";
 	};
  
 };
