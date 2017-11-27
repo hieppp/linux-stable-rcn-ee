@@ -70,59 +70,74 @@
 	mcasp0_pins: mcasp0_pins {
 		pinctrl-single,pins = <
 			0x1AC (PIN_INPUT | MUX_MODE0) /* mcasp0_ahclkx */
-			0x190 (PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_aclkx */ /* P9_31 */
-			0x194 (PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_fsx*/ /* P9_29 */
-			0x19C (PIN_OUTPUT_PULLDOWN | MUX_MODE2) /* mcasp0_arx2 */ /* P9_28 */
+			0x190 (PIN_OUTPUT_PULLUP | MUX_MODE0)	/* mcasp0_aclkx */ /* P9_31 */
+			0x194 (PIN_OUTPUT_PULLUP | MUX_MODE0)	/* mcasp0_fsx*/ /* P9_29 */
+			0x19C (PIN_OUTPUT_PULLUP | MUX_MODE2) /* mcasp0_arx2 */ /* P9_28 */
 			0x198 (PIN_OUTPUT_PULLUP | MUX_MODE0)
+		>;
+	};
+
+	i2c2_pins: pinmux_i2c2_pins {
+		pinctrl-single,pins = <
+			0x150 0x72 	/*spi0_scl.i2c2_sda,SLEWCTRL_SLOW | INPUT_PULLUP |MODE2*/
+			0x154 0x72	/*spi0_d0.i2c2_scl,SLEWCTRL_SLOW | INPUT_PULLUP | MODE2*/
 		>;
 	};
 };
 
 &i2c2 {
-	#address-cells = <1>;
-	#size-cells = <0>;
-	clock-frequency = <100000>;
-	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2c2_pins>;
 
-	tlv320aic3x: tlv320aic3x@18 {
-		compatible = "ti,tlv320aic3x";
+	status = "okay";
+	clock-frequency = <100000>;
+
+	tlv320aic32x4: tlv320aic32x4@18 {
+		#sound-dai-cells = <0>;
+		compatible = "ti,tlv320aic32x4";
 		reg = <0x18>;
-		status = "okay";
 	};
 };
+
 
 &mcasp0 {
 	#sound-dai-cells = <0>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&mcasp0_pins>;
 	status = "okay";
-	op-mode = <0>;          /* MCASP_IIS_MODE */
-	tdm-slots = <2>;
-	/* 16 serializer */
-	serial-dir = <  /* 0: INACTIVE, 1: TX, 2: RX */
-		2 0 1 0
-		0 0 0 0
-		0 0 0 0
-		0 0 0 0
-	>;
-	tx-num-evt = <1>;
-	rx-num-evt = <1>;
+	op-mode = <0>; /* MCASP_IIS_MODE */
+	tdm-slots = <2>; /* Indicates number of channels transmitted or received over 	oneserializer. */
+	serial-dir = </* 0: INACTIVE, 1: TX, 2: RX */
+		1 2 0 0
+		>;
+	tx-num-evt = <32>;
+	rx-num-evt = <32>;
 };
 
 / {
 	sound {
-		compatible = "ti,da830-evm-audio";
-		ti,model = "DA830 EVM";
-		ti,audio-codec = <&tlv320aic3x>;
-		ti,mcasp-controller = <&mcasp0>;
-		ti,codec-clock-rate = <12000000>;
-		ti,audio-routing =
-			"Headphone Jack",       "HPLOUT",
-			"Headphone Jack",       "HPROUT",
-			"LINE1L",               "Line In",
-			"LINE1R",               "Line In";
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "tlv320aic32x4";
+		simple-audio-card,widgets =
+			"Headphone", "Headphone Jack",
+			"Line", "Line In";
+		simple-audio-card,routing =
+			"Headphone Jack", "HPL",
+			"Headphone Jack", "HPR",
+			"IN1_L",  "Line In",
+			"IN1_R",  "Line In";
+		simple-audio-card,format = "i2s";
+		simple-audio-card,bitclock-master = <&sound_master>;
+		simple-audio-card,frame-master = <&sound_master>;
+		simple-audio-card,bitclock-inversion;
+
+		simple-audio-card,cpu {
+			sound-dai = <&mcasp0>;
+		};
+
+		sound_master: simple-audio-card,codec {
+			sound-dai = <&tlv320aic32x4>;
+			system-clock-frequency = <12000000>;
+		};
 	};
- 
 };

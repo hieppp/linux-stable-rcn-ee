@@ -500,21 +500,12 @@ static int aic32x4_set_bias_level(struct snd_soc_codec *codec,
 
 	switch (level) {
 	case SND_SOC_BIAS_ON:
-		if (aic32x4->mclk) {
-			/* Switch on master clock */
-			ret = clk_prepare_enable(aic32x4->mclk);
-			if (ret) {
-				dev_err(codec->dev, "Failed to enable master clock\n");
-				return ret;
-			}
+		/* Switch on master clock */
+		ret = clk_prepare_enable(aic32x4->mclk);
+		if (ret) {
+			dev_err(codec->dev, "Failed to enable master clock\n");
+			return ret;
 		}
-		// if (aic32x4->mclk) {
-		// 	/* Switch on master clock */
-		// 	ret = clk_prepare_enable(aic32x4->mclk);
-		// 	if (ret) {
-		// 		dev_err(codec->dev, "Failed to enable master clock\n");
-		// 		return ret;
-		// 	}
 
 		/* Switch on PLL */
 		snd_soc_update_bits(codec, AIC32X4_PLLPR,
@@ -567,13 +558,8 @@ static int aic32x4_set_bias_level(struct snd_soc_codec *codec,
 		snd_soc_update_bits(codec, AIC32X4_PLLPR,
 				    AIC32X4_PLLEN, 0);
 
-		// /* Switch off master clock */
-		// clk_disable_unprepare(aic32x4->mclk);
-
-		if (aic32x4->mclk) {
-			/* Switch off master clock */
-			clk_disable_unprepare(aic32x4->mclk);
-		}
+		/* Switch off master clock */
+		clk_disable_unprepare(aic32x4->mclk);
 		break;
 	case SND_SOC_BIAS_OFF:
 		break;
@@ -830,10 +816,8 @@ static int aic32x4_i2c_probe(struct i2c_client *i2c,
 
 	aic32x4->mclk = devm_clk_get(&i2c->dev, "mclk");
 	if (IS_ERR(aic32x4->mclk)) {
-		// dev_err(&i2c->dev, "Failed getting the mclk. The current implementation does not support the usage of this codec without mclk\n");
-		// return PTR_ERR(aic32x4->mclk);
-		dev_warn(&i2c->dev, "Failed getting the mclk.\n");
-		aic32x4->mclk = NULL;
+		dev_err(&i2c->dev, "Failed getting the mclk. The current implementation does not support the usage of this codec without mclk\n");
+		return PTR_ERR(aic32x4->mclk);
 	}
 
 	if (gpio_is_valid(aic32x4->rstn_gpio)) {
