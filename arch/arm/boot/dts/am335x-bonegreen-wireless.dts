@@ -96,6 +96,7 @@
 		#sound-dai-cells = <0>;
 		compatible = "ti,tlv320aic32x4";
 		reg = <0x18>;
+		clock-names = "mclk";
 	};
 };
 
