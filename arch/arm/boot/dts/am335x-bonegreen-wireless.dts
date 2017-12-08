@@ -121,13 +121,7 @@
         ti,model = "TI TLV320AIC32X4";
         ti,audio-codec = <&tlv320aic32x4>;
         ti,mcasp-controller = <&mcasp0>;
-        ti,codec-clock-rate = <12000000>;
-        ti,audio-routing =
-            "Headphone Jack",       "HPLOUT",
-            "Headphone Jack",       "HPROUT",
-            "LINE1L",               "Line In",
-            "LINE1R",               "Line In";
-        clock-names = "mclk";
+        ti,codec-clock-rate = <24000000>;
     };
 
 };
