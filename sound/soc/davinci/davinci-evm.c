@@ -506,6 +506,10 @@ static const struct of_device_id davinci_evm_dt_ids[] = {
 		.compatible = "ti,wilink8-bt-audio",
 		.data = (void *) &evm_dai_wilink8_bt,
 	},
+	{
+		.compatible = "ti,tlv320aic32x4-evm-audio",
+		.data = (void *) &evm_dai_tlv320aic32x4,
+	},
 	{ /* sentinel */ }
 };
 MODULE_DEVICE_TABLE(of, davinci_evm_dt_ids);

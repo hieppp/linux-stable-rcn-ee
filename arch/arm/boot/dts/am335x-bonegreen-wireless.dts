@@ -116,29 +116,18 @@
 };
 
 / {
-	sound {
-		compatible = "simple-audio-card";
-		simple-audio-card,name = "tlv320aic32x4";
-		simple-audio-card,widgets =
-			"Headphone", "Headphone Jack",
-			"Line", "Line In";
-		simple-audio-card,routing =
-			"Headphone Jack", "HPL",
-			"Headphone Jack", "HPR",
-			"IN1_L",  "Line In",
-			"IN1_R",  "Line In";
-		simple-audio-card,format = "i2s";
-		simple-audio-card,bitclock-master = <&sound_master>;
-		simple-audio-card,frame-master = <&sound_master>;
-		simple-audio-card,bitclock-inversion;
+    sound {
+        compatible = "ti,tlv320aic32x4-evm-audio";
+        ti,model = "TI TLV320AIC32X4";
+        ti,audio-codec = <&tlv320aic32x4>;
+        ti,mcasp-controller = <&mcasp0>;
+        ti,codec-clock-rate = <12000000>;
+        ti,audio-routing =
+            "Headphone Jack",       "HPLOUT",
+            "Headphone Jack",       "HPROUT",
+            "LINE1L",               "Line In",
+            "LINE1R",               "Line In";
+        clock-names = "mclk";
+    };
 
-		simple-audio-card,cpu {
-			sound-dai = <&mcasp0>;
-		};
-
-		sound_master: simple-audio-card,codec {
-			sound-dai = <&tlv320aic32x4>;
-			system-clock-frequency = <12000000>;
-		};
-	};
 };
