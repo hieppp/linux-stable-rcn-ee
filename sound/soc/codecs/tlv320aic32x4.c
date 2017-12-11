@@ -816,8 +816,8 @@ static int aic32x4_i2c_probe(struct i2c_client *i2c,
 
 	aic32x4->mclk = devm_clk_get(&i2c->dev, "mclk");
 	if (IS_ERR(aic32x4->mclk)) {
-		dev_err(&i2c->dev, "Failed getting the mclk. The current implementation does not support the usage of this codec without mclk\n");
-		return PTR_ERR(aic32x4->mclk);
+		dev_warn(&i2c->dev, "Failed getting the mclk. The current implementation does not support the usage of this codec without mclk\n");
+		aic32x4->mclk = NULL;
 	}
 
 	if (gpio_is_valid(aic32x4->rstn_gpio)) {
