@@ -479,6 +479,7 @@ static struct snd_soc_dai_link evm_dai_tlv320aic32x4 = {
 	.stream_name 	= "AIC32X",
 	.codec_dai_name = "tlv320aic32x4-hifi",
 	.ops 			= &evm_ops,
+	.init = evm_aic3x_init,
 	.dai_fmt = SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_CBM_CFM |
 		   SND_SOC_DAIFMT_IB_NF,
 };
@@ -493,18 +494,18 @@ static struct snd_soc_dai_link evm_dai_wilink8_bt = {
 };
 
 static const struct of_device_id davinci_evm_dt_ids[] = {
-	{
-		.compatible = "ti,pcm5102a-evm-audio",
-		.data = (void *) &evm_dai_pcm5102a,
-	},
-	{
-		.compatible = "ti,da830-evm-audio",
-		.data = (void *) &evm_dai_tlv320aic3x,
-	},
-	{
-		.compatible = "ti,wilink8-bt-audio",
-		.data = (void *) &evm_dai_wilink8_bt,
-	},
+	// {
+	// 	.compatible = "ti,pcm5102a-evm-audio",
+	// 	.data = (void *) &evm_dai_pcm5102a,
+	// },
+	// {
+	// 	.compatible = "ti,da830-evm-audio",
+	// 	.data = (void *) &evm_dai_tlv320aic3x,
+	// },
+	// {
+	// 	.compatible = "ti,wilink8-bt-audio",
+	// 	.data = (void *) &evm_dai_wilink8_bt,
+	// },
 	{
 		.compatible = "ti,tlv320aic32x4-evm-audio",
 		.data = (void *) &evm_dai_tlv320aic32x4,
