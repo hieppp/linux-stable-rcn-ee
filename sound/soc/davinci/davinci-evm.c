@@ -479,7 +479,7 @@ static struct snd_soc_dai_link evm_dai_tlv320aic32x4 = {
 	.stream_name 	= "AIC32X",
 	.codec_dai_name = "tlv320aic32x4-hifi",
 	.ops 			= &evm_ops,
-	.init = evm_aic3x_init,
+	.init 			= evm_aic3x_init,
 	.dai_fmt = SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_CBM_CFM |
 		   SND_SOC_DAIFMT_IB_NF,
 };
