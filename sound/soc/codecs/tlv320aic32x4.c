@@ -827,11 +827,11 @@ static int aic32x4_i2c_probe(struct i2c_client *i2c,
 			return ret;
 	}
 
-	// ret = aic32x4_setup_regulators(&i2c->dev, aic32x4);
-	// if (ret) {
-	// 	dev_err(&i2c->dev, "Failed to setup regulators\n");
-	// 	return ret;
-	// }
+	ret = aic32x4_setup_regulators(&i2c->dev, aic32x4);
+	if (ret) {
+		dev_err(&i2c->dev, "Failed to setup regulators\n");
+		return ret;
+	}
 
 	ret = snd_soc_register_codec(&i2c->dev,
 			&soc_codec_dev_aic32x4, &aic32x4_dai, 1);
