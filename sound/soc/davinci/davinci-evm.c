@@ -498,10 +498,10 @@ static const struct of_device_id davinci_evm_dt_ids[] = {
 	// 	.compatible = "ti,pcm5102a-evm-audio",
 	// 	.data = (void *) &evm_dai_pcm5102a,
 	// },
-	{
-		.compatible = "ti,da830-evm-audio",
-		.data = (void *) &evm_dai_tlv320aic3x,
-	},
+	// {
+	// 	.compatible = "ti,da830-evm-audio",
+	// 	.data = (void *) &evm_dai_tlv320aic3x,
+	// },
 	// {
 	// 	.compatible = "ti,wilink8-bt-audio",
 	// 	.data = (void *) &evm_dai_wilink8_bt,
