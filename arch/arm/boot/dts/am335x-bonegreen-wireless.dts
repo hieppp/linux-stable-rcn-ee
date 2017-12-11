@@ -69,11 +69,10 @@
 &am33xx_pinmux {
 	mcasp0_pins: mcasp0_pins {
 		pinctrl-single,pins = <
-			0x1AC (PIN_INPUT | MUX_MODE0) /* mcasp0_ahclkx */
-			0x190 (PIN_OUTPUT_PULLUP | MUX_MODE0)	/* mcasp0_aclkx */ /* P9_31 */
-			0x194 (PIN_OUTPUT_PULLUP | MUX_MODE0)	/* mcasp0_fsx*/ /* P9_29 */
-			0x19C (PIN_OUTPUT_PULLUP | MUX_MODE2) /* mcasp0_arx2 */ /* P9_28 */
-			0x198 (PIN_OUTPUT_PULLUP | MUX_MODE0)
+		   AM33XX_IOPAD(0x9A8, PIN_INPUT_PULLDOWN | MUX_MODE0) /* mcasp0_axr1.mcasp0_axr1 AM335X_MCASP0_AXR1 */
+		   AM33XX_IOPAD(0x998, PIN_INPUT_PULLDOWN | MUX_MODE0) /* mcasp0_axr0.mcasp0_axr0 AM335X_MCASP0_AXR0 */
+		   AM33XX_IOPAD(0x994, PIN_INPUT_PULLDOWN | MUX_MODE0) /* mcasp0_fsx.mcasp0_fsx AM335X_MCASP0_FSX */
+		   AM33XX_IOPAD(0x990, PIN_INPUT_PULLDOWN | MUX_MODE0) /* mcasp0_aclkx.mcasp0_aclkx AM335X_MCASP0_ACLKX */
 		>;
 	};
 
