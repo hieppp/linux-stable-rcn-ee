@@ -69,17 +69,12 @@
 &am33xx_pinmux {
 	mcasp0_pins: mcasp0_pins {
 		pinctrl-single,pins = <
-		   AM33XX_IOPAD(0x9A8, PIN_INPUT_PULLDOWN | MUX_MODE0) /* mcasp0_axr1.mcasp0_axr1 AM335X_MCASP0_AXR1 */
-		   AM33XX_IOPAD(0x998, PIN_INPUT_PULLDOWN | MUX_MODE0) /* mcasp0_axr0.mcasp0_axr0 AM335X_MCASP0_AXR0 */
-		   AM33XX_IOPAD(0x994, PIN_INPUT_PULLDOWN | MUX_MODE0) /* mcasp0_fsx.mcasp0_fsx AM335X_MCASP0_FSX */
-		   AM33XX_IOPAD(0x990, PIN_INPUT_PULLDOWN | MUX_MODE0) /* mcasp0_aclkx.mcasp0_aclkx AM335X_MCASP0_ACLKX */
-		>;
-	};
-
-	i2c2_pins: pinmux_i2c2_pins {
-		pinctrl-single,pins = <
-			0x150 0x72 	/*spi0_scl.i2c2_sda,SLEWCTRL_SLOW | INPUT_PULLUP |MODE2*/
-			0x154 0x72	/*spi0_d0.i2c2_scl,SLEWCTRL_SLOW | INPUT_PULLUP | MODE2*/
+			AM33XX_IOPAD(0x9ac, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_ahcklx.mcasp0_ahclkx */
+			AM33XX_IOPAD(0x994, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_fsx.mcasp0_fsx */
+			AM33XX_IOPAD(0x990, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_aclkx.mcasp0_aclkx */
+			AM33XX_IOPAD(0x998, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_axr0.mcasp0_axr0 */
+			AM33XX_IOPAD(0x9a8, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_axr1.mcasp0_axr1 */
+			AM33XX_IOPAD(0x86c, PIN_OUTPUT_PULLDOWN | MUX_MODE7) /* gpmc_a11.GPIO1_27 */
 		>;
 	};
 };
@@ -95,7 +90,6 @@
 		#sound-dai-cells = <0>;
 		compatible = "ti,tlv320aic32x4";
 		reg = <0x18>;
-		status = "okay";
 	};
 };
 
@@ -114,17 +108,30 @@
 };
 
 / {
-    sound {
-        compatible = "ti,tlv320aic32x4-evm-audio";
-        ti,model = "TI TLV320AIC32X4";
-        ti,audio-codec = <&tlv320aic32x4>;
-        ti,mcasp-controller = <&mcasp0>;
-        ti,codec-clock-rate = <12000000>;
+	clk_mcasp0_fixed: clk_mcasp0_fixed {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <24576000>;
+	};
+
+	clk_mcasp0: clk_mcasp0 {
+		#clock-cells = <0>;
+		compatible = "gpio-gate-clock";
+		clocks = <&clk_mcasp0_fixed>;
+		enable-gpios = <&gpio1 27 0>; /* BeagleBone Black Clk enable on GPIO1_27 */
+	};
+
+	sound {
+		compatible = "ti,tlv320aic32x4-evm-audio";
+		ti,model = "TI TLV320AIC32X4";
+		ti,audio-codec = <&tlv320aic32x4>;
+		ti,mcasp-controller = <&mcasp0>;
+		ti,codec-clock-rate = <12000000>;
 		ti,audio-routing =
 			"Headphone Jack",       "HPLOUT",
 			"Headphone Jack",       "HPROUT",
 			"LINE1L",               "Line In",
 			"LINE1R",               "Line In";
-    };
+	};
 
 };

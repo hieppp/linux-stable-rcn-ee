@@ -93,6 +93,36 @@ static int pcm5102a_hw_params(struct snd_pcm_substream *substream,
 	return ret;
 }
 
+static int tlv320aic32x4_hw_params(struct snd_pcm_substream *substream,
+				 struct snd_pcm_hw_params *params)
+{
+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+	struct snd_soc_card *soc_card = rtd->card;
+	struct platform_device *pdev = to_platform_device(soc_card->dev);
+	unsigned int bclk_freq = evm_get_bclk(params);
+	unsigned sysclk = ((struct snd_soc_card_drvdata_davinci *)
+			   snd_soc_card_get_drvdata(soc_card))->sysclk;
+	int ret;
+
+	ret = snd_soc_dai_set_clkdiv(cpu_dai, 1, sysclk/bclk_freq);
+	if (ret < 0) {
+		dev_err(&pdev->dev, "can't set CPU DAI clock divider %d\n",
+			ret);
+		return ret;
+	}
+
+	printk("TLV320AIC32X4 hw params\n");
+	printk("sysclk=%d\n", sysclk);
+	printk("bclk_freq=%d\n", bclk_freq);
+
+	ret = snd_soc_dai_set_sysclk(cpu_dai, 0, sysclk, SND_SOC_CLOCK_OUT);
+	if (ret < 0)
+		return ret;
+ 
+	return ret;
+}
+
 static int evm_hw_params(struct snd_pcm_substream *substream,
 			 struct snd_pcm_hw_params *params)
 {
@@ -201,6 +231,12 @@ static struct snd_soc_ops pcm5102a_ops = {
 	.startup = evm_startup,
 	.shutdown = evm_shutdown,
 	.hw_params = pcm5102a_hw_params,
+};
+
+static struct snd_soc_ops tlv320aic32x4_ops = {
+	.startup = evm_startup,
+	.shutdown = evm_shutdown,
+	.hw_params = tlv320aic32x4_hw_params,
 };
 
 /* davinci-evm machine dapm widgets */
@@ -478,7 +514,7 @@ static struct snd_soc_dai_link evm_dai_tlv320aic32x4 = {
 	.name 		= "TLV320AIC32X4",
 	.stream_name 	= "AIC32X",
 	.codec_dai_name = "tlv320aic32x4-hifi",
-	.ops 			= &evm_ops,
+	.ops 			= &tlv320aic32x4_ops,
 	.init 			= evm_aic3x_init,
 	.dai_fmt = SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_CBM_CFM |
 		   SND_SOC_DAIFMT_IB_NF,
