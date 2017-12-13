@@ -96,30 +96,33 @@ static int pcm5102a_hw_params(struct snd_pcm_substream *substream,
 static int tlv320aic32x4_hw_params(struct snd_pcm_substream *substream,
 				 struct snd_pcm_hw_params *params)
 {
-	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-	struct snd_soc_card *soc_card = rtd->card;
-	struct platform_device *pdev = to_platform_device(soc_card->dev);
-	unsigned int bclk_freq = evm_get_bclk(params);
-	unsigned sysclk = ((struct snd_soc_card_drvdata_davinci *)
-			   snd_soc_card_get_drvdata(soc_card))->sysclk;
-	int ret;
+    struct snd_soc_pcm_runtime *rtd = substream->private_data;
+    struct snd_soc_dai *codec_dai = rtd->codec_dai;
+    struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+    struct snd_soc_card *soc_card = rtd->card;
+    int ret = 0;
+    unsigned int bclk_freq = evm_get_bclk(params);
+    unsigned sysclk = ((struct snd_soc_card_drvdata_davinci *)
+               snd_soc_card_get_drvdata(soc_card))->sysclk;
 
-	ret = snd_soc_dai_set_clkdiv(cpu_dai, 1, sysclk/bclk_freq);
-	if (ret < 0) {
-		dev_err(&pdev->dev, "can't set CPU DAI clock divider %d\n",
-			ret);
-		return ret;
-	}
+	// ret = snd_soc_dai_set_clkdiv(cpu_dai, 1, sysclk/bclk_freq);
+	// if (ret < 0) 
+	// 	return ret;
 
 	printk("TLV320AIC32X4 hw params\n");
 	printk("sysclk=%d\n", sysclk);
 	printk("bclk_freq=%d\n", bclk_freq);
 
-	ret = snd_soc_dai_set_sysclk(cpu_dai, 0, sysclk, SND_SOC_CLOCK_OUT);
-	if (ret < 0)
-		return ret;
- 
+    /* set the CPU system clock */
+    ret = snd_soc_dai_set_sysclk(cpu_dai, 0, sysclk, SND_SOC_CLOCK_OUT);
+    if (ret < 0)
+        return ret;
+
+    /* set the codec system clock */
+    ret = snd_soc_dai_set_sysclk(codec_dai, 0, sysclk, SND_SOC_CLOCK_OUT);
+    if (ret < 0)
+        return ret;
+
 	return ret;
 }
 
