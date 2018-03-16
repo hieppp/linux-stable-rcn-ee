@@ -83,9 +83,9 @@ static int pcm5102a_hw_params(struct snd_pcm_substream *substream,
 		return ret;
 	}
  
-	// printk("PCM5102a hw params\n");
-	// printk("sysclk=%d\n", sysclk);
-	// printk("bclk_freq=%d\n", bclk_freq);
+	printk("PCM5102a hw params\n");
+	printk("sysclk=%d\n", sysclk);
+	printk("bclk_freq=%d\n", bclk_freq);
 	ret = snd_soc_dai_set_sysclk(cpu_dai, 0, sysclk, SND_SOC_CLOCK_OUT);
 	if (ret < 0)
 		return ret;
@@ -101,22 +101,28 @@ static int tlv320aic32x4_hw_params(struct snd_pcm_substream *substream,
     struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
     struct snd_soc_card *soc_card = rtd->card;
     int ret = 0;
+	struct platform_device *pdev = to_platform_device(soc_card->dev);
     unsigned int bclk_freq = evm_get_bclk(params);
     unsigned sysclk = ((struct snd_soc_card_drvdata_davinci *)
                snd_soc_card_get_drvdata(soc_card))->sysclk;
 
-	// ret = snd_soc_dai_set_clkdiv(cpu_dai, 1, sysclk/bclk_freq);
-	// if (ret < 0) 
-	// 	return ret;
+	ret = snd_soc_dai_set_clkdiv(cpu_dai, 1, sysclk/bclk_freq);
+	if (ret < 0) {
+		dev_err(&pdev->dev, "can't set CPU DAI clock divider %d\n",
+			ret);
+		return ret;
+	}
 
 	printk("TLV320AIC32X4 hw params\n");
 	printk("sysclk=%d\n", sysclk);
 	printk("bclk_freq=%d\n", bclk_freq);
+	printk("clkdiv=%d\n", sysclk/bclk_freq);
 
     /* set the CPU system clock */
-    ret = snd_soc_dai_set_sysclk(cpu_dai, 0, sysclk, SND_SOC_CLOCK_OUT);
+	ret = snd_soc_dai_set_sysclk(cpu_dai, 0, sysclk, SND_SOC_CLOCK_OUT);
     if (ret < 0)
         return ret;
+
 
     /* set the codec system clock */
     ret = snd_soc_dai_set_sysclk(codec_dai, 0, sysclk, SND_SOC_CLOCK_OUT);
@@ -518,9 +524,8 @@ static struct snd_soc_dai_link evm_dai_tlv320aic32x4 = {
 	.stream_name 	= "AIC32X",
 	.codec_dai_name = "tlv320aic32x4-hifi",
 	.ops 			= &tlv320aic32x4_ops,
-	.init 			= evm_aic3x_init,
-	.dai_fmt = SND_SOC_DAIFMT_DSP_B | SND_SOC_DAIFMT_CBM_CFM |
-		   SND_SOC_DAIFMT_IB_NF,
+	.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS |
+		   SND_SOC_DAIFMT_NB_IF,
 };
 
 static struct snd_soc_dai_link evm_dai_wilink8_bt = {
@@ -532,19 +537,28 @@ static struct snd_soc_dai_link evm_dai_wilink8_bt = {
 			SND_SOC_DAIFMT_DSP_A),
 };
 
+static struct snd_soc_dai_link evm_dai_pcm5102a = {
+	.name		= "PCM5102A", //This is chosen arbitrarily.  Can be anything.
+	.stream_name	= "Playback", //This comes from the PCM5102a driver create previously.
+	.codec_dai_name	= "pcm5102a-hifi", //This comes from the PCM5102a driver create previously
+	.ops            = &pcm5102a_ops, //This is a structure that we will create later.
+	.dai_fmt 	= (SND_SOC_DAIFMT_CBS_CFS | SND_SOC_DAIFMT_I2S |
+			   SND_SOC_DAIFMT_IB_NF),
+};
+
 static const struct of_device_id davinci_evm_dt_ids[] = {
-	// {
-	// 	.compatible = "ti,pcm5102a-evm-audio",
-	// 	.data = (void *) &evm_dai_pcm5102a,
-	// },
-	// {
-	// 	.compatible = "ti,da830-evm-audio",
-	// 	.data = (void *) &evm_dai_tlv320aic3x,
-	// },
-	// {
-	// 	.compatible = "ti,wilink8-bt-audio",
-	// 	.data = (void *) &evm_dai_wilink8_bt,
-	// },
+	{
+		.compatible = "ti,da830-evm-audio",
+		.data = (void *) &evm_dai_tlv320aic3x,
+	},
+	{
+		.compatible = "ti,wilink8-bt-audio",
+		.data = (void *) &evm_dai_wilink8_bt,
+	},
+	{
+		.compatible = "ti,pcm5102a-evm-audio",
+		.data = (void *) &evm_dai_pcm5102a,
+	},
 	{
 		.compatible = "ti,tlv320aic32x4-evm-audio",
 		.data = (void *) &evm_dai_tlv320aic32x4,

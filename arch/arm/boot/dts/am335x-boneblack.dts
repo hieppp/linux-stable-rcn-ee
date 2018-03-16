@@ -73,38 +73,47 @@
 			0x190 (PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_aclkx */
 			0x194 (PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_fsx*/
 			0x198 (PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_axr0 */
+			0x1ac (PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_ahclkx */
 		>;
 	};
 };
- 
-&mcasp0 {
-		#sound-dai-cells = <0>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&mcasp0_pins>;
+
+&i2c2 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	clock-frequency = <100000>;
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c2_pins>;
+
+	tlv320aic32x4: tlv320aic32x4@18 {
+		compatible = "ti,tlv320aic32x4";
+		reg = <0x18>;
 		status = "okay";
-		op-mode = <0>;          /* MCASP_IIS_MODE */
-		tdm-slots = <2>;
-		/* 16 serializer */
-		serial-dir = <  /* 0: INACTIVE, 1: TX, 2: RX */
-			1 0 0 0
-		>;
-		tx-num-evt = <32>;
-		rx-num-evt = <32>;
-};
- 
-/ {
- 
-	pcm5102a: pcm5102a {
-		#sound-dai-cells = <0>;
-		compatible = "ti,pcm5102a";
 	};
- 
+};
+
+&mcasp0 {
+	#sound-dai-cells = <0>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&mcasp0_pins>;
+	status = "okay";
+	op-mode = <0>;          /* MCASP_IIS_MODE */
+	tdm-slots = <2>;
+	/* 4 serializer */
+	serial-dir = <  /* 0: INACTIVE, 1: TX, 2: RX */
+		1 0 0 0
+	>;
+	tx-num-evt = <32>;
+	rx-num-evt = <32>;
+};
+
+/ {
 	sound {
-		compatible = "ti,pcm5102a-evm-audio";
-		ti,model = "TI PCM5102A";
-		ti,audio-codec = <&pcm5102a>;
+		compatible = "ti,tlv320aic32x4-evm-audio";
+		ti,model = "TI TLV320AIC32X4";
+		ti,audio-codec = <&tlv320aic32x4>;
 		ti,mcasp-controller = <&mcasp0>;
 		ti,codec-clock-rate = <24000000>;
 	};
- 
 };

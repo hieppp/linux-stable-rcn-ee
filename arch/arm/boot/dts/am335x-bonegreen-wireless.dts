@@ -69,27 +69,26 @@
 &am33xx_pinmux {
 	mcasp0_pins: mcasp0_pins {
 		pinctrl-single,pins = <
-			AM33XX_IOPAD(0x9ac, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_ahcklx.mcasp0_ahclkx */
-			AM33XX_IOPAD(0x994, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_fsx.mcasp0_fsx */
-			AM33XX_IOPAD(0x990, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_aclkx.mcasp0_aclkx */
-			AM33XX_IOPAD(0x998, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_axr0.mcasp0_axr0 */
-			AM33XX_IOPAD(0x9a8, PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_axr1.mcasp0_axr1 */
-			AM33XX_IOPAD(0x86c, PIN_OUTPUT_PULLDOWN | MUX_MODE7) /* gpmc_a11.GPIO1_27 */
+			0x190 (PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_aclkx */
+			0x194 (PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_fsx*/
+			0x198 (PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_axr0 */
+			0x1ac (PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_ahclkx */
 		>;
 	};
 };
 
 &i2c2 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	clock-frequency = <100000>;
+	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2c2_pins>;
 
-	status = "okay";
-	clock-frequency = <100000>;
-
 	tlv320aic32x4: tlv320aic32x4@18 {
-		#sound-dai-cells = <0>;
 		compatible = "ti,tlv320aic32x4";
 		reg = <0x18>;
+		status = "okay";
 	};
 };
 
@@ -98,11 +97,12 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&mcasp0_pins>;
 	status = "okay";
-	op-mode = <0>; /* MCASP_IIS_MODE */
-	tdm-slots = <2>; /* Indicates number of channels transmitted or received over 	oneserializer. */
-	serial-dir = </* 0: INACTIVE, 1: TX, 2: RX */
-		1 2 0 0
-		>;
+	op-mode = <0>;          /* MCASP_IIS_MODE */
+	tdm-slots = <2>;
+	/* 4 serializer */
+	serial-dir = <  /* 0: INACTIVE, 1: TX, 2: RX */
+		1 0 0 0
+	>;
 	tx-num-evt = <32>;
 	rx-num-evt = <32>;
 };
@@ -113,12 +113,6 @@
 		ti,model = "TI TLV320AIC32X4";
 		ti,audio-codec = <&tlv320aic32x4>;
 		ti,mcasp-controller = <&mcasp0>;
-		ti,codec-clock-rate = <12000000>;
-		ti,audio-routing =
-			"Headphone Jack",       "HPLOUT",
-			"Headphone Jack",       "HPROUT",
-			"LINE1L",               "Line In",
-			"LINE1R",               "Line In";
+		ti,codec-clock-rate = <24000000>;
 	};
-
 };
