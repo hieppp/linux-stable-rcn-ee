@@ -399,15 +399,6 @@ static struct snd_soc_dai_link da830_evm_dai = {
 		   SND_SOC_DAIFMT_IB_NF,
 };
 
-static struct snd_soc_dai_link evm_dai_pcm5102a = {
-	.name		= "PCM5102A", //This is chosen arbitrarily.  Can be anything.
-	.stream_name	= "Playback", //This comes from the PCM5102a driver create previously.
-	.codec_dai_name	= "pcm5102a-hifi", //This comes from the PCM5102a driver create previously
-	.ops            = &pcm5102a_ops, //This is a structure that we will create later.
-	.dai_fmt 	= (SND_SOC_DAIFMT_CBS_CFS | SND_SOC_DAIFMT_I2S |
-			   SND_SOC_DAIFMT_IB_NF),
-};
-
 static struct snd_soc_dai_link da850_evm_dai = {
 	.name = "TLV320AIC3X",
 	.stream_name = "AIC3X",
