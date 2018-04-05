@@ -75,15 +75,22 @@
 			0x1ac (PIN_INPUT_PULLDOWN | MUX_MODE0)	/* mcasp0_ahclkx */
 		>;
 	};
+
+	i2c1_pins: pinmux_i2c1_pins {
+		pinctrl-single,pins = <
+			0x158 (PIN_INPUT_PULLUP | MUX_MODE2)	/* spi0_d1.i2c1_sda */
+			0x15c (PIN_INPUT_PULLUP | MUX_MODE2)	/* spi0_cs0.i2c1_scl */
+		>;
+	};
 };
 
-&i2c2 {
+&i2c1 {
 	#address-cells = <1>;
 	#size-cells = <0>;
 	clock-frequency = <100000>;
 	status = "okay";
 	pinctrl-names = "default";
-	pinctrl-0 = <&i2c2_pins>;
+	pinctrl-0 = <&i2c1_pins>;
 
 	tlv320aic32x4: tlv320aic32x4@18 {
 		compatible = "ti,tlv320aic32x4";
