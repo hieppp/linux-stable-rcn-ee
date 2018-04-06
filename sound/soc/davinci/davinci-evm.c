@@ -113,10 +113,10 @@ static int tlv320aic32x4_hw_params(struct snd_pcm_substream *substream,
 		return ret;
 	}
 
-	printk("TLV320AIC32X4 hw params\n");
-	printk("sysclk=%d\n", sysclk);
-	printk("bclk_freq=%d\n", bclk_freq);
-	printk("clkdiv=%d\n", sysclk/bclk_freq);
+	// printk("TLV320AIC32X4 hw params\n");
+	// printk("sysclk=%d\n", sysclk);
+	// printk("bclk_freq=%d\n", bclk_freq);
+	// printk("clkdiv=%d\n", sysclk/bclk_freq);
 
     /* set the CPU system clock */
 	ret = snd_soc_dai_set_sysclk(cpu_dai, 0, sysclk, SND_SOC_CLOCK_OUT);

@@ -537,7 +537,6 @@ static int aic32x4_hw_params(struct snd_pcm_substream *substream,
 		return i;
 	}
 
-	printk("Hiep debug: aic32x4 div: %d\n", i);
 	/* Use PLL as CODEC_CLKIN and DAC_MOD_CLK as BDIV_CLKIN */
 	snd_soc_write(codec, AIC32X4_CLKMUX, AIC32X4_PLLCLKIN);
 	snd_soc_write(codec, AIC32X4_IFACE3, AIC32X4_DACMOD2BCLK);
