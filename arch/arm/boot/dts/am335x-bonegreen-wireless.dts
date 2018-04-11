@@ -78,8 +78,14 @@
 
 	i2c1_pins: pinmux_i2c1_pins {
 		pinctrl-single,pins = <
-			0x158 (PIN_INPUT_PULLUP | MUX_MODE2)	/* spi0_d1.i2c1_sda */
-			0x15c (PIN_INPUT_PULLUP | MUX_MODE2)	/* spi0_cs0.i2c1_scl */
+			0x158 (PIN_INPUT_PULLUP | MUX_MODE2)	/* i2c1_sda */
+			0x15c (PIN_INPUT_PULLUP | MUX_MODE2)	/* i2c1_scl */
+		>;
+	};
+
+	headphone_int_pins: headphone_pins {
+		pinctrl-single,pins = <
+			0x07c (PIN_INPUT_PULLUP | MUX_MODE7)	/* gpio1_29 */
 		>;
 	};
 };
@@ -121,5 +127,12 @@
 		ti,audio-codec = <&tlv320aic32x4>;
 		ti,mcasp-controller = <&mcasp0>;
 		ti,codec-clock-rate = <24000000>;
+	};
+
+	gpio1_29_pinmux {
+		compatible = "bone-pinmux-helper";
+		status = "okay";
+		pinctrl-names = "default", "gpio";
+		pinctrl-0 = <&headphone_int_pins>;
 	};
 };
