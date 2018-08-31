@@ -29,7 +29,7 @@
  * blacklist pru-rproc
  */
 
-#include "am33xx-pruss-uio.dtsi"
+/* #include "am33xx-pruss-uio.dtsi" */
 
 / {
 	model = "TI AM335x BeagleBone Green Wireless";
@@ -83,11 +83,22 @@
 		>;
 	};
 
-	headphone_int_pins: headphone_pins {
+	micarray_pins: pinmux_micarray_pins {
 		pinctrl-single,pins = <
-			0x07c (PIN_INPUT_PULLUP | MUX_MODE7)	/* gpio1_29 */
+			0x07c (PIN_OUTPUT_PULLDOWN | MUX_MODE7)		/* gpio1_29 as MCU BOOT0 */
+			0x094 (PIN_OUTPUT_PULLDOWN | MUX_MODE7) 	/* gpio2_3 as output pin to MCU*/
+			0x040 (PIN_INPUT_PULLUP | MUX_MODE7) 		/* gpio1_16 as input from MCU */
+			0x090 (PIN_OUTPUT_PULLDOWN | MUX_MODE7) 	/* gpio2_2 as MCU NRST */
 		>;
 	};
+
+	mic_uart2_pins: pinmux_uart2_pins {
+		pinctrl-single,pins = <
+			0x10c (PIN_INPUT_PULLUP | MUX_MODE6)	/* mii1_crs.uart2_rxd */
+			0x110 (PIN_OUTPUT_PULLDOWN | MUX_MODE6)	/* mii1_rxerr.uart2_txd */
+		>;
+	};
+
 };
 
 &i2c1 {
@@ -103,6 +114,14 @@
 		reg = <0x18>;
 		status = "okay";
 	};
+};
+
+
+&uart2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&mic_uart2_pins>;
+
+	status = "okay";
 };
 
 &mcasp0 {
@@ -129,10 +148,10 @@
 		ti,codec-clock-rate = <24000000>;
 	};
 
-	gpio1_29_pinmux {
+	micarray_pinmux {
 		compatible = "bone-pinmux-helper";
 		status = "okay";
 		pinctrl-names = "default", "gpio";
-		pinctrl-0 = <&headphone_int_pins>;
+		pinctrl-0 = <&micarray_pins>;
 	};
 };
