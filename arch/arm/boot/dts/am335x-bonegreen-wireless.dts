@@ -66,6 +66,10 @@
 	status = "disabled";
 };
 
+&gpio2 {
+	ti,no-reset-on-init;
+};
+
 &am33xx_pinmux {
 	mcasp0_pins: mcasp0_pins {
 		pinctrl-single,pins = <
