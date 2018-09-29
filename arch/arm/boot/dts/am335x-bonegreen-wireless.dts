@@ -92,7 +92,7 @@
 			0x07c (PIN_OUTPUT_PULLDOWN | MUX_MODE7)		/* gpio1_29 as MCU BOOT0 */
 			0x094 (PIN_OUTPUT_PULLDOWN | MUX_MODE7) 	/* gpio2_3 as output pin to MCU*/
 			0x040 (PIN_INPUT_PULLUP | MUX_MODE7) 		/* gpio1_16 as input from MCU */
-			0x090 (PIN_OUTPUT_PULLUP | MUX_MODE7) 	/* gpio2_2 as MCU NRST */
+			0x090 (PIN_OUTPUT_PULLDOWN | MUX_MODE7) 	/* gpio2_2 as MCU NRST */
 		>;
 	};
 
